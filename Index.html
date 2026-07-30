@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Plataforma de vídeos para desenvolvimento do corpo, da mente e do espírito." />
+  <title>HÁBITOS 3.5.7 — Corpo, Mente e Espírito</title>
+  <style>
+    :root{
+      --bg:#0b0c10; --panel:#13151b; --panel2:#191c24; --text:#f5f6f8;
+      --muted:#9ba1ad; --line:#292d37; --accent:#d7ff4f; --accent2:#9eefc8;
+      --danger:#ff7b7b; --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:14px 24px;background:rgba(11,12,16,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+    .brand-mark{width:34px;height:34px;border-radius:11px;background:var(--accent);display:grid;place-items:center;color:#111;font-weight:1000}
+    .search-wrap{flex:1;max-width:720px;margin:auto;position:relative}
+    .search{width:100%;padding:13px 46px 13px 18px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--text);outline:none}
+    .search:focus{border-color:var(--accent)}
+    .search-icon{position:absolute;right:17px;top:12px;color:var(--muted)}
+    .profile{border:0;background:var(--panel2);color:var(--text);border-radius:999px;padding:10px 15px}
+    .layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 64px)}
+    aside{position:sticky;top:64px;height:calc(100vh - 64px);padding:24px 14px;border-right:1px solid var(--line)}
+    .nav-btn{width:100%;border:0;background:transparent;color:var(--muted);padding:13px 14px;border-radius:12px;text-align:left;margin-bottom:5px}
+    .nav-btn:hover,.nav-btn.active{background:var(--panel2);color:var(--text)}
+    .nav-btn.active{box-shadow:inset 3px 0 var(--accent)}
+    .aside-title{font-size:.72rem;color:#6f7580;text-transform:uppercase;letter-spacing:.13em;margin:24px 14px 10px}
+    main{padding:28px clamp(18px,4vw,56px) 70px;min-width:0}
+    .hero{min-height:360px;border-radius:28px;padding:clamp(28px,6vw,68px);display:flex;align-items:center;position:relative;overflow:hidden;background:
+      radial-gradient(circle at 84% 18%,rgba(215,255,79,.25),transparent 28%),
+      radial-gradient(circle at 68% 82%,rgba(158,239,200,.15),transparent 32%),
+      linear-gradient(135deg,#181c22,#0e1117)}
+    .hero:after{content:"3·5·7";position:absolute;right:5%;bottom:-10%;font-size:clamp(90px,18vw,260px);font-weight:1000;color:rgba(255,255,255,.035);letter-spacing:-.08em}
+    .hero-copy{max-width:720px;position:relative;z-index:1}
+    .eyebrow{color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.15em;font-size:.75rem}
+    h1{font-size:clamp(2.3rem,5vw,5rem);line-height:.95;letter-spacing:-.055em;margin:14px 0 20px}
+    .hero p{font-size:clamp(1rem,2vw,1.25rem);line-height:1.65;color:#c0c5ce;max-width:620px}
+    .cta{display:inline-flex;align-items:center;gap:9px;border:0;border-radius:999px;padding:13px 19px;background:var(--accent);color:#111;font-weight:900;margin-top:12px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0 35px}
+    .stat{background:var(--panel);border:1px solid var(--line);padding:18px;border-radius:16px}
+    .stat strong{display:block;font-size:1.35rem}.stat span{color:var(--muted);font-size:.85rem}
+    .pillar-section{scroll-margin-top:92px;margin-top:42px}
+    .pillar-section:first-child{margin-top:0}
+    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:34px 0 18px}
+    .section-head h2{margin:0;font-size:1.65rem;letter-spacing:-.03em}.section-head p{margin:4px 0 0;color:var(--muted)}
+    .pillar-label{display:inline-block;margin-bottom:8px;color:var(--accent);font-size:.75rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+    .pillar-description{max-width:720px;line-height:1.6}
+    .filters{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
+    .chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:999px;padding:9px 14px;white-space:nowrap}
+    .chip.active,.chip:hover{background:var(--text);color:#111;border-color:var(--text)}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+    .card{background:transparent;border-radius:var(--radius);overflow:hidden;transition:.2s transform}
+    .card:hover{transform:translateY(-4px)}
+    .thumb{aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;position:relative;background:#222;border:1px solid var(--line)}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:.35s transform}
+    .card:hover .thumb img{transform:scale(1.04)}
+    .play{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.15);border:0;width:100%;color:white}
+    .play span{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.72);font-size:1.25rem;padding-left:3px}
+    .badge{position:absolute;top:12px;left:12px;padding:6px 9px;border-radius:999px;background:rgba(11,12,16,.82);backdrop-filter:blur(10px);font-size:.72rem;font-weight:800}
+    .duration{position:absolute;right:10px;bottom:9px;background:rgba(0,0,0,.78);padding:4px 7px;border-radius:7px;font-size:.72rem}
+    .card-body{padding:13px 4px 3px}
+    .meta-top{display:flex;gap:12px;align-items:flex-start}
+    .card h3{font-size:1rem;line-height:1.35;margin:0 0 7px;flex:1}
+    .card p{font-size:.84rem;color:var(--muted);margin:0;line-height:1.45}
+    .fav{border:0;background:transparent;color:var(--muted);font-size:1.25rem;padding:0}
+    .fav.active{color:var(--accent)}
+    .progress{height:4px;background:#262a32;border-radius:99px;margin-top:11px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:var(--accent);width:0}
+    .empty{display:none;padding:60px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}
+    .modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.86);display:none;align-items:center;justify-content:center;padding:24px}
+    .modal.open{display:flex}
+    .modal-panel{width:min(1100px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+    .player{aspect-ratio:16/9;background:#000}
+    .player iframe{width:100%;height:100%;border:0}
+    .modal-info{padding:20px 22px 24px;display:flex;justify-content:space-between;gap:20px}
+    .modal-info h2{margin:0 0 8px}.modal-info p{margin:0;color:var(--muted)}
+    .close{position:fixed;right:26px;top:22px;width:43px;height:43px;border-radius:50%;border:1px solid #555;background:#111;color:#fff;font-size:1.3rem}
+    .lock-screen{height:100%;display:grid;place-items:center;text-align:center;padding:30px;background:linear-gradient(135deg,#151922,#20251a)}
+    .lock-screen div{max-width:480px}.lock-screen h2{font-size:2rem;margin:12px 0}.lock-screen p{color:var(--muted)}
+    footer{border-top:1px solid var(--line);padding:30px 5%;color:var(--muted);text-align:center}
+
+    .card.locked{opacity:.64;transform:none}
+    .card.locked:hover{transform:none}
+    .card.locked .thumb img{filter:grayscale(.8) brightness(.55)}
+    .card.locked .play{background:rgba(0,0,0,.42)}
+    .card.locked .play span{background:rgba(12,13,17,.9)}
+    .lock-badge{position:absolute;inset:auto 12px 12px 12px;padding:9px 11px;border-radius:11px;background:rgba(11,12,16,.9);font-size:.75rem;text-align:center;color:#d8dbe2;border:1px solid rgba(255,255,255,.1)}
+    .video-number{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(11,12,16,.86);font-weight:900;font-size:.8rem}
+    .completed-badge{color:#111;background:var(--accent)}
+    .commitment{padding:0 22px 24px;border-top:1px solid var(--line)}
+    .commitment-box{margin-top:20px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .commitment-box h3{margin:0 0 7px;font-size:1.05rem}
+    .commitment-box p{color:var(--muted);line-height:1.55;margin:0 0 14px}
+    .reflection-label{display:block;font-weight:750;margin:13px 0 7px}
+    .reflection-input{width:100%;min-height:92px;resize:vertical;background:#101217;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none}
+    .reflection-input:focus{border-color:var(--accent)}
+    .confirmation-line{display:flex;align-items:flex-start;gap:10px;margin:14px 0;color:#d8dbe2;line-height:1.45}
+    .confirmation-line input{margin-top:4px;accent-color:var(--accent)}
+    .confirm-btn:disabled{cursor:not-allowed;opacity:.42}
+    .journey-note{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:.83rem;margin-top:10px}
+    .toast{position:fixed;left:50%;bottom:26px;z-index:200;transform:translate(-50%,18px);background:#f5f6f8;color:#111;padding:12px 17px;border-radius:999px;font-weight:800;opacity:0;pointer-events:none;transition:.25s}
+    .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    @media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:82px 1fr}aside{padding:18px 8px}.nav-btn{font-size:0;text-align:center}.nav-btn:before{font-size:1.2rem}.nav-btn[data-icon="home"]:before{content:"⌂"}.nav-btn[data-icon="body"]:before{content:"●"}.nav-btn[data-icon="mind"]:before{content:"◉"}.nav-btn[data-icon="spirit"]:before{content:"✦"}.nav-btn[data-icon="fav"]:before{content:"♥"}.aside-title{display:none}}
+    @media(max-width:680px){.topbar{padding:12px}.brand span{display:none}.profile{display:none}.layout{display:block}aside{display:none}main{padding:16px 14px 55px}.hero{min-height:390px;padding:28px 22px}.stats{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.modal{padding:0}.modal-panel{border-radius:0;height:100%;overflow:auto}.close{right:12px;top:10px}.modal-info{flex-direction:column}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="brand-mark">357</div><span>HÁBITOS 3.5.7</span></div>
+  <div class="search-wrap">
+    <input id="search" class="search" type="search" placeholder="Busque por tema, autor ou categoria..." aria-label="Pesquisar vídeos">
+    <span class="search-icon">⌕</span>
+  </div>
+  <button class="profile">Entrar</button>
+</header>
+
+<div class="layout">
+  <aside>
+    <button class="nav-btn active" data-scroll="catalogo" data-icon="home">Início</button>
+    <button class="nav-btn" data-scroll="corpo" data-icon="body">Corpo</button>
+    <button class="nav-btn" data-scroll="mente" data-icon="mind">Mente</button>
+    <button class="nav-btn" data-scroll="espirito" data-icon="spirit">Espírito</button>
+    <div class="aside-title">Sua jornada</div>
+    <button class="nav-btn" data-action="favorites" data-icon="fav">Favoritos</button>
+  </aside>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">Conhecimento que transforma</div>
+        <h1>Evolua por inteiro.</h1>
+        <p>Uma jornada de vídeos e práticas para desenvolver o corpo, fortalecer a mente e aprofundar o espírito — sete conteúdos para cada pilar.</p>
+        <button class="cta" onclick="scrollToSection('corpo')">Começar agora <span>→</span></button>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><strong id="totalCount">21</strong><span>vídeos selecionados</span></div>
+      <div class="stat"><strong>3 pilares</strong><span>corpo, mente e espírito</span></div>
+      <div class="stat"><strong id="watchedCount">0</strong><span>conteúdos iniciados</span></div>
+    </section>
+
+    <section id="catalogo" class="pillar-section">
+      <div class="section-head">
+        <div>
+          <span class="pillar-label">HÁBITOS 3.5.7</span>
+          <h2>Conteúdos essenciais</h2>
+          <p class="pillar-description">Sete conteúdos para cada pilar do seu desenvolvimento.</p>
+        </div>
+        <div class="filters">
+          <button class="chip active" data-scroll="catalogo">Todos</button>
+          <button class="chip" data-scroll="corpo">Corpo</button>
+          <button class="chip" data-scroll="mente">Mente</button>
+          <button class="chip" data-scroll="espirito">Espírito</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="corpo" class="pillar-section" data-category-section="Corpo">
+      <div class="section-head">
+        <div>
+          <span class="pillar-label">7 VÍDEOS PARA O CORPO</span>
+          <h2>PILAR CORPO</h2>
+          <p class="pillar-description">Movimento, mobilidade, energia e uma relação mais consciente com o corpo.</p>
+        </div>
+      </div>
+      <div id="gridCorpo" class="grid"></div>
+    </section>
+
+    <section id="mente" class="pillar-section" data-category-section="Mente">
+      <div class="section-head">
+        <div>
+          <span class="pillar-label">7 VÍDEOS PARA A MENTE</span>
+          <h2>PILAR MENTE</h2>
+          <p class="pillar-description">Foco, inteligência emocional, autoconhecimento e clareza mental.</p>
+        </div>
+      </div>
+      <div id="gridMente" class="grid"></div>
+    </section>
+
+    <section id="espirito" class="pillar-section" data-category-section="Espírito">
+      <div class="section-head">
+        <div>
+          <span class="pillar-label">7 VÍDEOS PARA O ESPÍRITO</span>
+          <h2>PILAR ESPÍRITO</h2>
+          <p class="pillar-description">Presença, propósito, silêncio, meditação e conexão interior.</p>
+        </div>
+      </div>
+      <div id="gridEspirito" class="grid"></div>
+    </section>
+
+    <div id="empty" class="empty">Nenhum conteúdo encontrado com essa busca.</div>
+  </main>
+</div>
+
+<div id="modal" class="modal" role="dialog" aria-modal="true">
+  <button class="close" aria-label="Fechar" onclick="closeModal()">×</button>
+  <div class="modal-panel">
+    <div id="player" class="player"></div>
+    <div class="modal-info">
+      <div><h2 id="modalTitle"></h2><p id="modalMeta"></p></div>
+      <a id="youtubeBtn" class="cta" href="#" target="_blank" rel="noopener" style="text-decoration:none;background:var(--panel2);color:var(--text);border:1px solid var(--line)">Abrir no YouTube ↗</a>
+    </div>
+    <div id="commitmentArea" class="commitment">
+      <div class="commitment-box">
+        <h3>Antes de seguir, faça uma pausa.</h3>
+        <p>Esta confirmação não existe apenas para liberar o próximo vídeo. Ela representa um compromisso com você mesmo e com aquilo que decidiu aprender.</p>
+        <label class="reflection-label" for="reflectionInput">O que este vídeo despertou ou ensinou a você?</label>
+        <textarea id="reflectionInput" class="reflection-input" maxlength="500" placeholder="Escreva ao menos uma frase sincera sobre o que ficou em você..."></textarea>
+        <label class="confirmation-line">
+          <input id="confirmationCheck" type="checkbox">
+          <span><strong>Eu confirmo que assisti a este vídeo com atenção</strong> e que não estou avançando apenas para desbloquear o próximo conteúdo.</span>
+        </label>
+        <button id="confirmBtn" class="cta confirm-btn" disabled>Confirmar e desbloquear o próximo</button>
+        <div id="commitmentStatus" class="journey-note"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>HÁBITOS 3.5.7 · Corpo, mente e espírito em evolução.</footer>
+<div id="toast" class="toast"></div>
+
+<script>
+const videos = [
+  // CORPO — 7 vídeos
+  {id:"TPj5V0qXV8Y", title:"Yoga para iniciantes: sinta-se muito bem", author:"Pri Leite", category:"Corpo", duration:"15 min", access:"Grátis", description:"Uma prática simples para começar a movimentar, respirar e cuidar do corpo."},
+  {id:"I8xhF_lB-ik", title:"Yoga para começar o dia", author:"Pri Leite", category:"Corpo", duration:"10 min", access:"Grátis", description:"Uma sequência curta para despertar energia e presença."},
+  {id:"SN9MIrngxZA", title:"Vinyasa yoga para iniciantes", author:"Fernanda Cunha / Namu", category:"Corpo", duration:"Aula", access:"Grátis", description:"Movimentos e técnicas de respiração para iniciantes."},
+  {id:"KCkOCxPSlKE", title:"Yoga para aliviar estresse e ansiedade", author:"Pri Leite", category:"Corpo", duration:"25 min", access:"Grátis", description:"Uma prática acessível para equilibrar o sistema nervoso e alongar o corpo."},
+  {id:"vCU9UBlpuEE", title:"Exercícios para despertar o corpo", author:"Exercícios matinais", category:"Corpo", duration:"Aula", access:"Grátis", description:"Alongamento e mobilidade para começar o dia com mais disposição."},
+  {id:"bAHjbs9vCo8", title:"Postura do gato e da vaca", author:"Pri Leite", category:"Corpo", duration:"Tutorial", access:"Grátis", description:"Um movimento simples para mobilidade da coluna, respiração e alívio de tensão."},
+  {id:"jglGd83jaFc", title:"Yoga ou Pilates: entenda as diferenças", author:"Conteúdo educativo", category:"Corpo", duration:"Explicação", access:"Grátis", description:"Conheça benefícios, diferenças e possibilidades de cada prática."},
+
+  // MENTE — 7 vídeos
+  {id:"pQkE08_rMnM", title:"O que é inteligência emocional e como desenvolvê-la", author:"Pedro Psicólogo", category:"Mente", duration:"Aula", access:"Grátis", description:"Conceitos e pilares para compreender e administrar melhor as emoções."},
+  {id:"BqF50IuR3_c", title:"Daniel Goleman: inteligência emocional", author:"Entrevista", category:"Mente", duration:"Entrevista", access:"Grátis", description:"Reflexões do autor que popularizou o conceito de inteligência emocional."},
+  {id:"Ubfi_3-s4DY", title:"Precisamos falar sobre saúde mental", author:"Palestra", category:"Mente", duration:"Palestra", access:"Grátis", description:"Uma conversa importante sobre cuidado emocional e saúde mental."},
+  {id:"-cMV9DWSyCU", title:"Inteligência emocional na prática", author:"Desenvolvimento pessoal", category:"Mente", duration:"Aula", access:"Grátis", description:"Estratégias para aplicar inteligência emocional nas situações do cotidiano."},
+  {id:"wCOcmBfVzaY", title:"Neurociência aplicada à inteligência emocional", author:"Márcio Micheli", category:"Mente", duration:"Palestra", access:"Grátis", description:"Autoconsciência, autocontrole e empatia vistos pela neurociência."},
+  {id:"xrQl9D2jVw4", title:"Os cinco domínios da inteligência emocional", author:"Resenha e aprendizado", category:"Mente", duration:"Resumo", access:"Grátis", description:"Uma introdução aos principais domínios descritos por Daniel Goleman."},
+  {id:"GZKmXLkjd4s", title:"Uma aula sobre inteligência emocional", author:"Rossandro Klinjey", category:"Mente", duration:"Entrevista", access:"Grátis", description:"Uma conversa profunda sobre emoções, relações e amadurecimento."},
+
+  // ESPÍRITO — 7 vídeos
+  {id:"fmBRuuQ0Gs8", title:"Meditação guiada de 5 minutos", author:"Yoga Mudra", category:"Espírito", duration:"5 min", access:"Grátis", description:"Uma prática breve de silêncio, respiração e presença."},
+  {id:"f6LnzOAOXQE", title:"Meditação para calma e positividade", author:"Camila Zen", category:"Espírito", duration:"13 min", access:"Grátis", description:"Uma prática acessível para cultivar tranquilidade e uma atitude mais consciente."},
+  {id:"e66W0hmkmjs", title:"O universo dentro de você", author:"Meditação guiada", category:"Espírito", duration:"Meditação", access:"Grátis", description:"Uma experiência contemplativa sobre conexão, existência e consciência."},
+  {id:"85uY4aO7SYE", title:"Mindfulness em 5 minutos", author:"Meditação guiada", category:"Espírito", duration:"5 min", access:"Grátis", description:"Atenção plena para reencontrar a calma e permanecer no momento presente."},
+  {id:"qSuZIuOK0bU", title:"Meditação de atenção plena", author:"Prática guiada", category:"Espírito", duration:"5 min", access:"Grátis", description:"Presença, percepção e observação em uma prática curta."},
+  {id:"URaOBBnG4CA", title:"Equilíbrio interior, foco e paz", author:"Yoga Para Você", category:"Espírito", duration:"10 min", access:"Grátis", description:"Uma meditação para cultivar harmonia e equilíbrio interior."},
+  {id:"mRHKtDZZiWQ", title:"Mindfulness: presença e consciência", author:"Meditação guiada", category:"Espírito", duration:"Prática", access:"Grátis", description:"Uma prática para desenvolver tranquilidade, clareza e foco."}
+];
+
+let currentVideo = null;
+let favoritesOnly = false;
+
+const favorites = new Set(JSON.parse(localStorage.getItem("habitos357Favorites") || "[]"));
+const completed = new Set(JSON.parse(localStorage.getItem("habitos357Completed") || "[]"));
+const reflections = JSON.parse(localStorage.getItem("habitos357Reflections") || "{}");
+
+function thumb(id){ return `https://img.youtube.com/vi/${id}/hqdefault.jpg`; }
+function categoryVideos(category){ return videos.filter(v => v.category === category); }
+function videoPosition(video){ return categoryVideos(video.category).findIndex(v => v.id === video.id); }
+
+function isUnlocked(video){
+  const position = videoPosition(video);
+  if(position === 0) return true;
+  return completed.has(categoryVideos(video.category)[position - 1].id);
+}
+
+function nextVideo(video){
+  return categoryVideos(video.category)[videoPosition(video) + 1] || null;
+}
+
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+}
+
+function lockedMessage(video){
+  const previous = categoryVideos(video.category)[videoPosition(video) - 1];
+  showToast(`Conclua e confirme o vídeo anterior: “${previous.title}”.`);
+  document.querySelector(`[data-video-id="${previous.id}"]`)?.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+function cardTemplate(v){
+  const position = videoPosition(v) + 1;
+  const unlocked = isUnlocked(v);
+  const done = completed.has(v.id);
+  const clickAction = unlocked
+    ? `openVideo('${v.id}')`
+    : `lockedMessage(videos.find(item => item.id === '${v.id}'))`;
+
+  return `
+    <article class="card ${unlocked ? "" : "locked"}" data-video-id="${v.id}">
+      <div class="thumb">
+        <img src="${thumb(v.id)}" alt="Capa do vídeo ${v.title}" loading="lazy">
+        <button class="play" onclick="${clickAction}" aria-label="${unlocked ? `Assistir ${v.title}` : `Vídeo ${position} bloqueado`}">
+          <span>${done ? "✓" : unlocked ? "▶" : "🔒"}</span>
+        </button>
+        <span class="badge ${done ? "completed-badge" : ""}">${done ? "Concluído" : v.category}</span>
+        <span class="video-number">${position}/7</span>
+        ${!unlocked ? `<div class="lock-badge">Conclua o vídeo ${position - 1} para desbloquear</div>` : `<span class="duration">${v.duration}</span>`}
+      </div>
+      <div class="card-body">
+        <div class="meta-top">
+          <div style="flex:1">
+            <h3>${v.title}</h3>
+            <p>${v.author} · ${v.description}</p>
+            <div class="journey-note">${done ? "✓ Reflexão confirmada" : unlocked ? "Disponível para assistir" : "Conteúdo bloqueado"}</div>
+          </div>
+          <button class="fav ${favorites.has(v.id) ? "active" : ""}" onclick="event.stopPropagation();toggleFavorite('${v.id}')" aria-label="Favoritar">♥</button>
+        </div>
+        <div class="progress"><i style="width:${done ? "100%" : "0"}"></i></div>
+      </div>
+    </article>`;
+}
+
+function render(){
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const visible = videos.filter(v => {
+    const matchesText = `${v.title} ${v.author} ${v.category} ${v.description}`.toLowerCase().includes(q);
+    return matchesText && (!favoritesOnly || favorites.has(v.id));
+  });
+
+  const groups = {
+    Corpo: visible.filter(v => v.category === "Corpo"),
+    Mente: visible.filter(v => v.category === "Mente"),
+    Espírito: visible.filter(v => v.category === "Espírito")
+  };
+
+  document.getElementById("gridCorpo").innerHTML = groups.Corpo.map(cardTemplate).join("");
+  document.getElementById("gridMente").innerHTML = groups.Mente.map(cardTemplate).join("");
+  document.getElementById("gridEspirito").innerHTML = groups.Espírito.map(cardTemplate).join("");
+
+  document.querySelector('[data-category-section="Corpo"]').style.display = groups.Corpo.length ? "block" : "none";
+  document.querySelector('[data-category-section="Mente"]').style.display = groups.Mente.length ? "block" : "none";
+  document.querySelector('[data-category-section="Espírito"]').style.display = groups.Espírito.length ? "block" : "none";
+  document.getElementById("empty").style.display = visible.length ? "none" : "block";
+  document.getElementById("totalCount").textContent = videos.length;
+  document.getElementById("watchedCount").textContent = completed.size;
+}
+
+function scrollToSection(id){
+  favoritesOnly = false;
+  document.querySelectorAll('[data-action="favorites"]').forEach(el => el.classList.remove("active"));
+  document.querySelectorAll("[data-scroll]").forEach(el => el.classList.toggle("active", el.dataset.scroll === id));
+  render();
+  document.getElementById(id)?.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+document.querySelectorAll("[data-scroll]").forEach(el => el.addEventListener("click", () => scrollToSection(el.dataset.scroll)));
+
+document.querySelector('[data-action="favorites"]').addEventListener("click", e => {
+  favoritesOnly = true;
+  document.querySelectorAll("[data-scroll]").forEach(el => el.classList.remove("active"));
+  e.currentTarget.classList.add("active");
+  render();
+  document.getElementById("catalogo").scrollIntoView({behavior:"smooth", block:"start"});
+});
+
+document.getElementById("search").addEventListener("input", render);
+
+function toggleFavorite(id){
+  favorites.has(id) ? favorites.delete(id) : favorites.add(id);
+  localStorage.setItem("habitos357Favorites", JSON.stringify([...favorites]));
+  render();
+}
+
+function updateConfirmationState(){
+  const reflection = document.getElementById("reflectionInput").value.trim();
+  const checked = document.getElementById("confirmationCheck").checked;
+  document.getElementById("confirmBtn").disabled = !(checked && reflection.length >= 12);
+}
+
+function openVideo(id){
+  const selected = videos.find(v => v.id === id);
+  if(!selected || !isUnlocked(selected)){
+    if(selected) lockedMessage(selected);
+    return;
+  }
+
+  currentVideo = selected;
+  const player = document.getElementById("player");
+  const isHosted = location.protocol === "http:" || location.protocol === "https:";
+
+  if(!isHosted){
+    player.innerHTML = `<div class="lock-screen"><div><div style="font-size:2.6rem">▶</div><h2>Abra a versão publicada</h2><p>O YouTube bloqueia o player quando este arquivo é aberto diretamente pelo celular. Publique o projeto em um endereço HTTPS para assistir dentro da plataforma.</p><a class="cta" style="text-decoration:none" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener noreferrer">Assistir agora no YouTube</a></div></div>`;
+  } else {
+    const origin = encodeURIComponent(location.origin);
+    player.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&origin=${origin}" title="${currentVideo.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+  }
+
+  document.getElementById("youtubeBtn").href = `https://www.youtube.com/watch?v=${id}`;
+  document.getElementById("modalTitle").textContent = currentVideo.title;
+  document.getElementById("modalMeta").textContent = `${currentVideo.author} · ${currentVideo.category} · Vídeo ${videoPosition(currentVideo) + 1} de 7`;
+
+  const alreadyCompleted = completed.has(id);
+  const reflectionInput = document.getElementById("reflectionInput");
+  const confirmationCheck = document.getElementById("confirmationCheck");
+  const confirmBtn = document.getElementById("confirmBtn");
+  const status = document.getElementById("commitmentStatus");
+
+  reflectionInput.value = reflections[id] || "";
+  confirmationCheck.checked = alreadyCompleted;
+  reflectionInput.disabled = alreadyCompleted;
+  confirmationCheck.disabled = alreadyCompleted;
+  confirmBtn.style.display = alreadyCompleted ? "none" : "inline-flex";
+  status.textContent = alreadyCompleted
+    ? "✓ Você já confirmou este conteúdo. O próximo vídeo deste pilar está liberado."
+    : "Escreva uma reflexão sincera e marque a confirmação para continuar.";
+
+  updateConfirmationState();
+  document.getElementById("modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("open");
+  document.getElementById("player").innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+document.getElementById("reflectionInput").addEventListener("input", updateConfirmationState);
+document.getElementById("confirmationCheck").addEventListener("change", updateConfirmationState);
+
+document.getElementById("confirmBtn").addEventListener("click", () => {
+  if(!currentVideo) return;
+
+  const reflection = document.getElementById("reflectionInput").value.trim();
+  const checked = document.getElementById("confirmationCheck").checked;
+  if(!checked || reflection.length < 12){
+    showToast("Escreva uma reflexão sincera e confirme que assistiu com atenção.");
+    return;
+  }
+
+  reflections[currentVideo.id] = reflection;
+  completed.add(currentVideo.id);
+  localStorage.setItem("habitos357Reflections", JSON.stringify(reflections));
+  localStorage.setItem("habitos357Completed", JSON.stringify([...completed]));
+
+  const next = nextVideo(currentVideo);
+  render();
+
+  document.getElementById("reflectionInput").disabled = true;
+  document.getElementById("confirmationCheck").disabled = true;
+  document.getElementById("confirmBtn").style.display = "none";
+  document.getElementById("commitmentStatus").textContent = next
+    ? `✓ Compromisso registrado. O próximo vídeo de ${currentVideo.category} foi desbloqueado.`
+    : `✓ Você concluiu os sete vídeos do pilar ${currentVideo.category}.`;
+
+  showToast(next ? `Vídeo ${videoPosition(next) + 1} de ${currentVideo.category} desbloqueado!` : `Pilar ${currentVideo.category} concluído!`);
+});
+
+document.getElementById("modal").addEventListener("click", e => {
+  if(e.target.id === "modal") closeModal();
+});
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape") closeModal();
+});
+render();
+</script>
+</body>
+</html>
